@@ -2,13 +2,15 @@
  * 이미지 출처: https://pixabay.com/ko/
  */
 
+import { FriendItem } from "../FriendList";
+
 export const myProfile = {
   uri: "https://png.pngtree.com/thumb_back/fh260/back_pic/03/54/06/62579986dba62df.jpg",
   name: "지은",
   introduction: "inspiring day",
 };
 
-export const friendProfiles = [
+export const friendProfiles: FriendItem[] = [
   {
     uri: "https://cdn.pixabay.com/photo/2017/08/30/01/05/milky-way-2695569__480.jpg",
     name: "김민호",
