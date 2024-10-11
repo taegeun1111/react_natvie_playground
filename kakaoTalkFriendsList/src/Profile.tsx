@@ -2,7 +2,7 @@ import React from "react";
 import { Image, Text, View } from "react-native";
 import Margin from "./Margin";
 
-interface MyProfileProps {
+export interface MyProfileProps {
   uri: string;
   name: string;
   introduction: string;
