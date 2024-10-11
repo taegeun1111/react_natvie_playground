@@ -11,14 +11,20 @@ export interface FriendItem {
 
 export interface FriendListProps {
   data: FriendItem[];
+  isOpened: boolean;
 }
 
-export default ({ data }: FriendListProps) => {
+export default ({ data, isOpened }: FriendListProps) => {
   const insets = useSafeAreaInsets();
+
+  if (isOpened) {
+    return null;
+  }
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: insets.bottom }}
+      // contentContainerStyle={{ paddingBottom: insets.bottom }}
     >
       {data.map((item, index) => (
         <View key={index}>
