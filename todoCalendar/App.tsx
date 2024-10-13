@@ -13,6 +13,7 @@ import Margin from "./src/Margin";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useState } from "react";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useCalendar } from "./src/hooks/useCalendar";
 
 interface ColumnProps {
   text: string;
@@ -30,33 +31,21 @@ interface ArrowButtonProps {
 
 export default function App() {
   const now = dayjs();
-  const [selectedDate, setSelectedDate] = useState(now);
+  const {
+    selectedDate,
+    isDatePickerVisible,
+    showDatePicker,
+    hideDatePicker,
+    handleConfirm,
+    add1Month,
+    subtract1Month,
+    setSelectedDate,
+  } = useCalendar({ now });
   const columns = getCalendarColumns(selectedDate);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
+  const onPressLeftArrow = subtract1Month;
 
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = (date: Date) => {
-    // console.warn("A date has been picked: ", date);
-    setSelectedDate(dayjs(date));
-    hideDatePicker();
-  };
-
-  const onPressLeftArrow = () => {
-    const newSelectedDate = dayjs(selectedDate).subtract(1, "month");
-    setSelectedDate(newSelectedDate);
-  };
-
-  const onPressRightArrow = () => {
-    const newSelectedDate = dayjs(selectedDate).add(1, "month");
-    setSelectedDate(newSelectedDate);
-  };
+  const onPressRightArrow = add1Month;
 
   const Column = ({
     color,
