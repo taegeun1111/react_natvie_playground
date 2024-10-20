@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Margin from "./Margin";
 import dayjs from "dayjs";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import { ITodoItem } from "./hooks/useTodoList";
 
 interface ArrowButtonProps {
   iconName: keyof typeof SimpleLineIcons.glyphMap;
@@ -18,6 +19,7 @@ interface ColumnProps {
   disabled?: boolean;
   onPress?: () => void;
   isSelected?: boolean;
+  hasTodo?: boolean;
 }
 
 interface CalendarProps {
@@ -27,6 +29,7 @@ interface CalendarProps {
   onPressHeaderDate: () => void;
   onPressDate: (date: dayjs.Dayjs) => void;
   columns: ArrayLike<Date>;
+  todoList: ITodoItem[];
 }
 
 const Calendar = ({
@@ -36,6 +39,7 @@ const Calendar = ({
   onPressHeaderDate,
   onPressDate,
   columns,
+  todoList,
 }: CalendarProps) => {
   const insets = useSafeAreaInsets();
   const renderItem = ({ item: date }: { item: Date }) => {
@@ -45,7 +49,9 @@ const Calendar = ({
     const isCurrentMonth = dayjs(date).isSame(selectedDate, "month");
     const onPress = () => onPressDate(dayjs(date));
     const isSelected = dayjs(date).isSame(selectedDate, "date");
-
+    const hasTodo = todoList.find((todo) =>
+      dayjs(todo.date).isSame(dayjs(date), "date")
+    );
     return (
       <Column
         text={String(dateText)}
@@ -53,6 +59,7 @@ const Calendar = ({
         opacity={isCurrentMonth ? 1 : 0.3}
         onPress={onPress}
         isSelected={isSelected}
+        hasTodo={hasTodo !== undefined}
       />
     );
   };
@@ -64,6 +71,7 @@ const Calendar = ({
     disabled,
     onPress,
     isSelected,
+    hasTodo,
   }: ColumnProps) => {
     return (
       <TouchableOpacity
@@ -79,7 +87,9 @@ const Calendar = ({
           borderRadius: 50,
         }}
       >
-        <Text style={{ color }}>{text}</Text>
+        <Text style={{ color, fontWeight: hasTodo ? "bold" : "normal" }}>
+          {text}
+        </Text>
       </TouchableOpacity>
     );
   };

@@ -48,17 +48,18 @@ function Main() {
 
   const {
     todoList,
+    filteredTodoList,
     input,
     setInput,
     toggleTodo,
     removeTodo,
     addTodo,
     resetInput,
-  } = useTodoList(now);
+  } = useTodoList(selectedDate);
 
   const insets = useSafeAreaInsets();
   const columns = getCalendarColumns(selectedDate);
-  const flatListRef = useRef<any>(null); 
+  const flatListRef = useRef<any>(null);
 
   const onPressLeftArrow = subtract1Month;
   const onPressHeaderDate = showDatePicker;
@@ -69,6 +70,7 @@ function Main() {
     return (
       <View>
         <Calendar
+          todoList={todoList}
           selectedDate={selectedDate}
           onPressLeftArrow={onPressLeftArrow}
           onPressRightArrow={onPressRightArrow}
@@ -138,24 +140,24 @@ function Main() {
   const onPressAdd = () => {
     addTodo();
     resetInput();
-    setTimeout(()=>{
+    setTimeout(() => {
       flatListRef.current?.scrollToEnd();
-    },300)
+    }, 300);
   };
 
   const onSubmitEditing = () => {
     addTodo();
     resetInput();
-    setTimeout(()=>{
+    setTimeout(() => {
       flatListRef.current?.scrollToEnd();
-    },300)
+    }, 300);
   };
 
   const onFocus = () => {
-    setTimeout(()=>{
+    setTimeout(() => {
       flatListRef.current?.scrollToEnd();
-    },300)
-  }
+    }, 300);
+  };
 
   return (
     <Pressable style={styles.container} onPress={Keyboard.dismiss}>
@@ -176,7 +178,7 @@ function Main() {
       >
         <View>
           <FlatList
-            data={todoList}
+            data={filteredTodoList}
             contentContainerStyle={{ paddingTop: insets.top + 15 }}
             ListHeaderComponent={ListHeaderComponent}
             renderItem={renderItem}
@@ -187,7 +189,7 @@ function Main() {
           <AddTodoInput
             value={input}
             onChangeText={setInput}
-            placeholder={`${dayjs(selectedDate).format("MM.DD")}에 초구할 투두`}
+            placeholder={`${dayjs(selectedDate).format("MM.DD")}에 추가할 투두`}
             onPressAdd={onPressAdd}
             onSubmitEditing={onSubmitEditing}
             onFocus={onFocus}
