@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useState } from "react";
 
-interface ITodoItem {
+export interface ITodoItem {
   id: number;
   content: string;
   date: dayjs.Dayjs;
@@ -49,5 +49,5 @@ export const useTodoList = (selectedDate: dayjs.Dayjs) => {
     setTodoList(newTodoList);
   };
 
-  return {};
+  return { todoList, addTodo, removeTodo, toggleTodo, input, setInput };
 };
