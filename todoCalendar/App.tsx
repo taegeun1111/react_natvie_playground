@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import {
+  Alert,
   FlatList,
   Image,
   Keyboard,
@@ -22,6 +23,7 @@ import { getCalendarColumns } from "./util";
 import { Ionicons } from "@expo/vector-icons";
 import Margin from "./src/Margin";
 import AddTodoInput from "./src/AddTodoInput";
+import { useRef } from "react";
 
 export default function App() {
   return (
@@ -44,10 +46,19 @@ function Main() {
     setSelectedDate,
   } = useCalendar({ now });
 
-  const { todoList, input, setInput } = useTodoList(now);
+  const {
+    todoList,
+    input,
+    setInput,
+    toggleTodo,
+    removeTodo,
+    addTodo,
+    resetInput,
+  } = useTodoList(now);
 
   const insets = useSafeAreaInsets();
   const columns = getCalendarColumns(selectedDate);
+  const flatListRef = useRef<any>(null); 
 
   const onPressLeftArrow = subtract1Month;
   const onPressHeaderDate = showDatePicker;
@@ -82,8 +93,25 @@ function Main() {
 
   const renderItem = ({ item: todo }: { item: ITodoItem }) => {
     const isSuccess = todo.isSuccess;
+    const onPress = () => toggleTodo(todo.id);
+    const onLongPress = () => {
+      Alert.alert("삭제하시겠어요?", "", [
+        {
+          style: "cancel",
+          text: "아니요",
+        },
+        {
+          text: "네",
+          onPress: () => {
+            removeTodo(todo.id);
+          },
+        },
+      ]);
+    };
     return (
-      <View
+      <Pressable
+        onPress={onPress}
+        onLongPress={onLongPress}
         style={{
           width: 220,
           alignItems: "center",
@@ -103,11 +131,31 @@ function Main() {
           size={17}
           color={isSuccess ? "#595959" : "#bfbfbf"}
         />
-      </View>
+      </Pressable>
     );
   };
 
-  const onPressAdd = () => {};
+  const onPressAdd = () => {
+    addTodo();
+    resetInput();
+    setTimeout(()=>{
+      flatListRef.current?.scrollToEnd();
+    },300)
+  };
+
+  const onSubmitEditing = () => {
+    addTodo();
+    resetInput();
+    setTimeout(()=>{
+      flatListRef.current?.scrollToEnd();
+    },300)
+  };
+
+  const onFocus = () => {
+    setTimeout(()=>{
+      flatListRef.current?.scrollToEnd();
+    },300)
+  }
 
   return (
     <Pressable style={styles.container} onPress={Keyboard.dismiss}>
@@ -129,9 +177,11 @@ function Main() {
         <View>
           <FlatList
             data={todoList}
-            contentContainerStyle={{ paddingTop: insets.top }}
+            contentContainerStyle={{ paddingTop: insets.top + 15 }}
             ListHeaderComponent={ListHeaderComponent}
             renderItem={renderItem}
+            ref={flatListRef}
+            showsVerticalScrollIndicator={false}
           />
 
           <AddTodoInput
@@ -139,6 +189,8 @@ function Main() {
             onChangeText={setInput}
             placeholder={`${dayjs(selectedDate).format("MM.DD")}에 초구할 투두`}
             onPressAdd={onPressAdd}
+            onSubmitEditing={onSubmitEditing}
+            onFocus={onFocus}
           />
         </View>
       </KeyboardAvoidingView>

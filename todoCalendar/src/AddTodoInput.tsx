@@ -8,6 +8,8 @@ interface AddTodoInputProps {
   onChangeText: React.Dispatch<React.SetStateAction<string>>;
   placeholder: string;
   onPressAdd: () => void;
+  onSubmitEditing: ()=>void;
+  onFocus: ()=>void;
 }
 
 const AddTodoInput = ({
@@ -15,6 +17,8 @@ const AddTodoInput = ({
   onChangeText,
   placeholder,
   onPressAdd,
+  onSubmitEditing,
+  onFocus
 }: AddTodoInputProps) => {
   const insets = useSafeAreaInsets();
 
@@ -33,6 +37,9 @@ const AddTodoInput = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
+        onSubmitEditing={onSubmitEditing}
+        blurOnSubmit={false}
+        onFocus={onFocus}
       />
       <TouchableOpacity onPress={onPressAdd} style={{ padding: 5 }}>
         <AntDesign name="plus" size={18} color={"#595959"} />

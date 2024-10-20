@@ -49,5 +49,17 @@ export const useTodoList = (selectedDate: dayjs.Dayjs) => {
     setTodoList(newTodoList);
   };
 
-  return { todoList, addTodo, removeTodo, toggleTodo, input, setInput };
+  const resetInput = () => {
+    setInput("");
+  };
+
+  return {
+    todoList,
+    addTodo,
+    removeTodo,
+    toggleTodo,
+    input,
+    setInput,
+    resetInput,
+  };
 };
