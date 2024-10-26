@@ -13,10 +13,10 @@ import {
   View,
 } from "react-native";
 import { IImage, useGallery } from "./src/useGallery";
-import data from "./node_modules/@expo/cli/node_modules/type-fest/source/readonly-deep.d";
+import data from "@expo/cli/node_modules/type-fest/source/readonly-deep";
 
 const screenWidth = Dimensions.get("screen").width;
-const columSize = screenWidth / 3.33333333;
+const columSize = screenWidth / 3;
 export default function App() {
   const { images, pickImage, deleteImage, imageWithADdButton } = useGallery();
 
@@ -56,7 +56,6 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button title="갤러리 열기" onPress={onPressOpenGallery} />
       <FlatList
         data={imageWithADdButton}
         renderItem={renderItem}
@@ -70,8 +69,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
   },
   image: {
     width: columSize,
