@@ -5,10 +5,27 @@ import { Alert } from "react-native";
 export interface IImage {
   id: number;
   uri: string;
+  albumId: number;
 }
+
+export interface ISelectedAlbum {
+  id: number;
+  title: string;
+}
+
+const defaultAlbum = {
+  id: 1,
+  title: "기본",
+};
 
 export const useGallery = () => {
   const [images, setImages] = useState<IImage[] | null>([]);
+  const [selectedAlbum, setSelectedAlbum] =
+    useState<ISelectedAlbum>(defaultAlbum);
+  const [albums, setAlbums] = useState([defaultAlbum]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [albumTitle, setAlbumTitle] = useState<string>("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -27,11 +44,12 @@ export const useGallery = () => {
           ? 0
           : images
           ? images[images?.length - 1].id
-          : 10;
+          : 0;
 
       const newImage: IImage = {
         id: lastId + 1,
         uri: result.assets[0].uri,
+        albumId: selectedAlbum.id,
       };
       if (images) {
         setImages([...images, newImage]);
@@ -58,21 +76,97 @@ export const useGallery = () => {
     ]);
   };
 
+  const filteredImages = images?.filter(
+    (list) => list.albumId === selectedAlbum.id
+  );
+
   const imageWithADdButton =
-    images && images?.length > 0
+    filteredImages && filteredImages?.length > 0
       ? [
-          ...images,
+          ...filteredImages,
           {
             id: -1,
             uri: "",
+            albumId: 1,
           },
         ]
       : [
           {
             id: -1,
             uri: "",
+            albumId: 1,
           },
         ];
 
-  return { images, pickImage, deleteImage, imageWithADdButton };
+  const openModal = () => setModalVisible(true);
+  const closeModal = () => setModalVisible(false);
+  const openDropdown = () => setIsDropdownOpen(true);
+  const closeDropdown = () => setIsDropdownOpen(false);
+
+  const addAlbum = () => {
+    const lastId = albums.length === 0 ? 0 : albums[albums.length - 1].id;
+
+    if (lastId) {
+      const newAlbum = {
+        id: lastId + 1,
+        title: albumTitle,
+      };
+
+      setAlbums([...albums, newAlbum]);
+      setSelectedAlbum(newAlbum);
+    }
+  };
+
+  const resetAlbumTitle = () => {
+    setAlbumTitle("");
+  };
+
+  const selectAlbum = (album: ISelectedAlbum) => {
+    setSelectedAlbum(album);
+  };
+
+  const deleteAlbum = (albumId: number) => {
+    if (albumId === defaultAlbum.id) {
+      Alert.alert("기본 앨범은 삭제할 수 없어요.");
+      return;
+    }
+    Alert.alert("이미지를 삭제하시겠어요?", "", [
+      {
+        style: "cancel",
+        text: "아니요",
+      },
+      {
+        style: "default",
+        text: "네",
+        onPress: () => {
+          const newAlbums = albums?.filter((list) => albumId !== list.id);
+          if (newAlbums) {
+            setAlbums(newAlbums);
+            setSelectedAlbum(defaultAlbum);
+            setIsDropdownOpen(false);
+          }
+        },
+      },
+    ]);
+  };
+
+  return {
+    pickImage,
+    deleteImage,
+    imageWithADdButton,
+    selectedAlbum,
+    modalVisible,
+    openModal,
+    closeModal,
+    albumTitle,
+    setAlbumTitle,
+    addAlbum,
+    resetAlbumTitle,
+    isDropdownOpen,
+    openDropdown,
+    closeDropdown,
+    albums,
+    selectAlbum,
+    deleteAlbum,
+  };
 };

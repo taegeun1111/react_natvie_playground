@@ -12,13 +12,34 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { IImage, useGallery } from "./src/useGallery";
+import { IImage, ISelectedAlbum, useGallery } from "./src/useGallery";
 import data from "@expo/cli/node_modules/type-fest/source/readonly-deep";
+import MyDropdownPicker from "./src/MyDropdownPicker";
+import TextInputModal from "./src/TextInputModal";
 
 const screenWidth = Dimensions.get("screen").width;
 const columSize = screenWidth / 3;
+
 export default function App() {
-  const { images, pickImage, deleteImage, imageWithADdButton } = useGallery();
+  const {
+    selectedAlbum,
+    pickImage,
+    deleteImage,
+    imageWithADdButton,
+    modalVisible,
+    openModal,
+    closeModal,
+    albumTitle,
+    setAlbumTitle,
+    addAlbum,
+    resetAlbumTitle,
+    isDropdownOpen,
+    closeDropdown,
+    openDropdown,
+    albums,
+    selectAlbum,
+    deleteAlbum,
+  } = useGallery();
 
   const onPressOpenGallery = () => {
     pickImage();
@@ -54,12 +75,58 @@ export default function App() {
     }
   };
 
+  const onPressAddAlbum = () => {
+    openModal();
+  };
+
+  const onSubmitEditing = () => {
+    if (!albumTitle || albumTitle.trim().length === 0) return;
+    addAlbum();
+    closeModal();
+    resetAlbumTitle();
+  };
+
+  const onPressHeader = () => {
+    if (isDropdownOpen) {
+      closeDropdown();
+    } else {
+      openDropdown();
+    }
+  };
+  const onPressAlbum = (album: ISelectedAlbum) => {
+    selectAlbum(album);
+    closeDropdown();
+  };
+
+  const onLongPressAlbum = (albumId: number) => {
+    deleteAlbum(albumId);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      <MyDropdownPicker
+        onPressHeader={onPressHeader}
+        selectedAlbum={selectedAlbum}
+        onPressAddAlbum={onPressAddAlbum}
+        isDropdownOpen={isDropdownOpen}
+        albums={albums}
+        onPressAlbum={onPressAlbum}
+        onLongPressAlbum={onLongPressAlbum}
+      />
+
+      <TextInputModal
+        modalVisible={modalVisible}
+        albumTitle={albumTitle}
+        setAlbumTitle={setAlbumTitle}
+        onSubmitEditing={onSubmitEditing}
+        onPressBackdrop={closeModal}
+      />
+
       <FlatList
         data={imageWithADdButton}
         renderItem={renderItem}
         numColumns={3}
+        style={styles.flatList}
       />
     </SafeAreaView>
   );
@@ -75,5 +142,8 @@ const styles = StyleSheet.create({
   image: {
     width: columSize,
     height: columSize,
+  },
+  flatList: {
+    zIndex: -1,
   },
 });
