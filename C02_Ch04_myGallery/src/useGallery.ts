@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface IImage {
   id: number;
@@ -29,6 +30,15 @@ export const useGallery = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedImg, setSelectedImg] = useState<null | IImage>(null);
 
+  const _setImages = (newImages: IImage[]) => {
+    setImages(newImages);
+    AsyncStorage.setItem("images", JSON.stringify(newImages));
+  };
+  const _setAlbums = (newAlbums: ISelectedAlbum[]) => {
+    setAlbums(newAlbums);
+    AsyncStorage.setItem("albums", JSON.stringify(newAlbums));
+  };
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -54,9 +64,9 @@ export const useGallery = () => {
         albumId: selectedAlbum.id,
       };
       if (images) {
-        setImages([...images, newImage]);
+        _setImages([...images, newImage]);
       } else {
-        setImages([newImage]);
+        _setImages([newImage]);
       }
     }
   };
@@ -72,7 +82,7 @@ export const useGallery = () => {
         text: "네",
         onPress: () => {
           const newImages = images?.filter((list) => imageId !== list.id);
-          if (newImages) setImages(newImages);
+          if (newImages) _setImages(newImages);
         },
       },
     ]);
@@ -116,7 +126,7 @@ export const useGallery = () => {
         title: albumTitle,
       };
 
-      setAlbums([...albums, newAlbum]);
+      _setAlbums([...albums, newAlbum]);
       setSelectedAlbum(newAlbum);
     }
   };
@@ -145,7 +155,7 @@ export const useGallery = () => {
         onPress: () => {
           const newAlbums = albums?.filter((list) => albumId !== list.id);
           if (newAlbums) {
-            setAlbums(newAlbums);
+            _setAlbums(newAlbums);
             setSelectedAlbum(defaultAlbum);
             setIsDropdownOpen(false);
           }
@@ -196,6 +206,24 @@ export const useGallery = () => {
   const showPreviousArrow = selectedImageIndex === 0;
   const showNextArrow =
     filteredImages && selectedImageIndex === filteredImages?.length - 1;
+
+  const initValues = async () => {
+    const imagesFromStorage = await AsyncStorage.getItem("images");
+    if (imagesFromStorage !== null) {
+      const pared = JSON.parse(imagesFromStorage);
+      setImages(pared);
+    }
+
+    const albumsFromStorage = await AsyncStorage.getItem("albums");
+    if (albumsFromStorage !== null) {
+      const pared = JSON.parse(albumsFromStorage);
+      setAlbums(pared);
+    }
+  };
+
+  useEffect(() => {
+    initValues();
+  }, []);
 
   return {
     pickImage,

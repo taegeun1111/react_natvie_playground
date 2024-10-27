@@ -37,8 +37,8 @@ interface TextInputModalProp {
   selectedImg: IImage | null;
   onPressArrowLeft: () => void;
   onPressArrowRight: () => void;
-  showPreviousArrow: boolean;
-  showNextArrow: boolean;
+  showPreviousArrow: boolean | undefined;
+  showNextArrow: boolean | undefined;
 }
 
 export default ({
