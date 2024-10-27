@@ -5,7 +5,7 @@ import { Alert } from "react-native";
 export interface IImage {
   id: number;
   uri: string;
-  albumId: number;
+  albumId?: number;
 }
 
 export interface ISelectedAlbum {
@@ -23,9 +23,11 @@ export const useGallery = () => {
   const [selectedAlbum, setSelectedAlbum] =
     useState<ISelectedAlbum>(defaultAlbum);
   const [albums, setAlbums] = useState([defaultAlbum]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [textModalVisible, setTextModalVisible] = useState(false);
+  const [imgModalVisible, setImgModalVisible] = useState(false);
   const [albumTitle, setAlbumTitle] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedImg, setSelectedImg] = useState<null | IImage>(null);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -98,8 +100,10 @@ export const useGallery = () => {
           },
         ];
 
-  const openModal = () => setModalVisible(true);
-  const closeModal = () => setModalVisible(false);
+  const openTextInputModal = () => setTextModalVisible(true);
+  const closeTextInputModal = () => setTextModalVisible(false);
+  const openBigImgModal = () => setImgModalVisible(true);
+  const closeBigImgModal = () => setImgModalVisible(false);
   const openDropdown = () => setIsDropdownOpen(true);
   const closeDropdown = () => setIsDropdownOpen(false);
 
@@ -150,14 +154,18 @@ export const useGallery = () => {
     ]);
   };
 
+  const selectedImage = (uri: IImage) => {
+    setSelectedImg(uri);
+  };
+
   return {
     pickImage,
     deleteImage,
     imageWithADdButton,
     selectedAlbum,
-    modalVisible,
-    openModal,
-    closeModal,
+    textModalVisible,
+    openTextInputModal,
+    closeTextInputModal,
     albumTitle,
     setAlbumTitle,
     addAlbum,
@@ -168,5 +176,10 @@ export const useGallery = () => {
     albums,
     selectAlbum,
     deleteAlbum,
+    imgModalVisible,
+    openBigImgModal,
+    closeBigImgModal,
+    selectedImage,
+    selectedImg,
   };
 };

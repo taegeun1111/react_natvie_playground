@@ -14,7 +14,7 @@ import {
 } from "react-native";
 
 interface TextInputModalProp {
-  modalVisible: boolean;
+  textModalVisible: boolean;
   albumTitle: string;
   setAlbumTitle: React.Dispatch<React.SetStateAction<string>>;
   onSubmitEditing: (
@@ -24,14 +24,14 @@ interface TextInputModalProp {
 }
 
 export default ({
-  modalVisible,
+  textModalVisible,
   albumTitle,
   setAlbumTitle,
   onSubmitEditing,
   onPressBackdrop,
 }: TextInputModalProp) => {
   return (
-    <Modal animationType="slide" transparent={true} visible={modalVisible}>
+    <Modal animationType="slide" transparent={true} visible={textModalVisible}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.view}

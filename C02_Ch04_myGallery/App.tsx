@@ -16,6 +16,7 @@ import { IImage, ISelectedAlbum, useGallery } from "./src/useGallery";
 import data from "@expo/cli/node_modules/type-fest/source/readonly-deep";
 import MyDropdownPicker from "./src/MyDropdownPicker";
 import TextInputModal from "./src/TextInputModal";
+import BigImgModal from "./src/BigImgModal";
 
 const screenWidth = Dimensions.get("screen").width;
 const columSize = screenWidth / 3;
@@ -26,9 +27,9 @@ export default function App() {
     pickImage,
     deleteImage,
     imageWithADdButton,
-    modalVisible,
-    openModal,
-    closeModal,
+    textModalVisible,
+    openTextInputModal,
+    closeTextInputModal,
     albumTitle,
     setAlbumTitle,
     addAlbum,
@@ -39,6 +40,11 @@ export default function App() {
     albums,
     selectAlbum,
     deleteAlbum,
+    imgModalVisible,
+    openBigImgModal,
+    closeBigImgModal,
+    selectedImage,
+    selectedImg,
   } = useGallery();
 
   const onPressOpenGallery = () => {
@@ -48,8 +54,21 @@ export default function App() {
   const onLongPress = (imageId: number) => {
     deleteImage(imageId);
   };
-  const renderItem = ({ item, index }: { item: IImage; index: number }) => {
-    if (item.id === -1) {
+
+  const onPressImg = (uri: IImage) => {
+    openBigImgModal();
+    selectedImage(uri);
+  };
+
+  const renderItem = ({
+    item: image,
+    index,
+  }: {
+    item: IImage;
+    index: number;
+  }) => {
+    const { id, uri } = image;
+    if (id === -1) {
       return (
         <TouchableOpacity
           style={{
@@ -68,21 +87,24 @@ export default function App() {
       );
     } else {
       return (
-        <TouchableOpacity onLongPress={() => onLongPress(item.id)}>
-          <Image source={{ uri: item.uri }} style={styles.image} />
+        <TouchableOpacity
+          onLongPress={() => onLongPress(id)}
+          onPress={() => onPressImg(image)}
+        >
+          <Image source={{ uri: uri }} style={styles.image} />
         </TouchableOpacity>
       );
     }
   };
 
   const onPressAddAlbum = () => {
-    openModal();
+    openTextInputModal();
   };
 
   const onSubmitEditing = () => {
     if (!albumTitle || albumTitle.trim().length === 0) return;
     addAlbum();
-    closeModal();
+    closeTextInputModal();
     resetAlbumTitle();
   };
 
@@ -115,11 +137,17 @@ export default function App() {
       />
 
       <TextInputModal
-        modalVisible={modalVisible}
+        textModalVisible={textModalVisible}
         albumTitle={albumTitle}
         setAlbumTitle={setAlbumTitle}
         onSubmitEditing={onSubmitEditing}
-        onPressBackdrop={closeModal}
+        onPressBackdrop={closeTextInputModal}
+      />
+
+      <BigImgModal
+        imgModalVisible={imgModalVisible}
+        onPressBackdrop={closeBigImgModal}
+        selectedImg={selectedImg}
       />
 
       <FlatList
