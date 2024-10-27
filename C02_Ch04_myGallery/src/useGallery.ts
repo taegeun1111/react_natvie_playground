@@ -158,6 +158,45 @@ export const useGallery = () => {
     setSelectedImg(uri);
   };
 
+  const moveToPreviousImage = () => {
+    const selectedImageIndex = filteredImages?.findIndex(
+      (image) => image.id === selectedImg?.id
+    );
+    if (selectedImageIndex === 0) {
+      return;
+    } else {
+      if (selectedImageIndex !== undefined && filteredImages) {
+        const previousIdx = selectedImageIndex - 1;
+        const previousImage = filteredImages[previousIdx];
+        setSelectedImg(previousImage);
+      }
+    }
+  };
+
+  const moveToNextImage = () => {
+    const selectedImageIndex = filteredImages?.findIndex(
+      (image) => image.id === selectedImg?.id
+    );
+
+    if (filteredImages && selectedImageIndex === filteredImages?.length - 1) {
+      return;
+    } else {
+      if (selectedImageIndex !== undefined && filteredImages) {
+        const nextIdx = selectedImageIndex + 1;
+        const previousImage = filteredImages[nextIdx];
+        setSelectedImg(previousImage);
+      }
+    }
+  };
+
+  const selectedImageIndex = filteredImages?.findIndex(
+    (image) => image.id === selectedImg?.id
+  );
+
+  const showPreviousArrow = selectedImageIndex === 0;
+  const showNextArrow =
+    filteredImages && selectedImageIndex === filteredImages?.length - 1;
+
   return {
     pickImage,
     deleteImage,
@@ -181,5 +220,9 @@ export const useGallery = () => {
     closeBigImgModal,
     selectedImage,
     selectedImg,
+    moveToPreviousImage,
+    moveToNextImage,
+    showPreviousArrow,
+    showNextArrow,
   };
 };

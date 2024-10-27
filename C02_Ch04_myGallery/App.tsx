@@ -45,6 +45,10 @@ export default function App() {
     closeBigImgModal,
     selectedImage,
     selectedImg,
+    moveToPreviousImage,
+    moveToNextImage,
+    showPreviousArrow,
+    showNextArrow,
   } = useGallery();
 
   const onPressOpenGallery = () => {
@@ -124,6 +128,13 @@ export default function App() {
     deleteAlbum(albumId);
   };
 
+  const onPressArrowLeft = () => {
+    moveToPreviousImage();
+  };
+  const onPressArrowRight = () => {
+    moveToNextImage();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <MyDropdownPicker
@@ -148,6 +159,10 @@ export default function App() {
         imgModalVisible={imgModalVisible}
         onPressBackdrop={closeBigImgModal}
         selectedImg={selectedImg}
+        onPressArrowLeft={onPressArrowLeft}
+        onPressArrowRight={onPressArrowRight}
+        showPreviousArrow={showPreviousArrow}
+        showNextArrow={showNextArrow}
       />
 
       <FlatList
