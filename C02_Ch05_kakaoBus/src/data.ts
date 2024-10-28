@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 
 export const busStop = {
   id: 23284,
@@ -12,16 +13,16 @@ export const busStop = {
       isBookmarked: false,
       nextBusInfos: [
         {
-          arrivalTime: dayjs().add(8, 'minute'),
+          arrivalTime: dayjs().add(8, "minute"),
           numOfRemainedStops: 5,
           numOfPassengers: 3,
         },
         {
-          arrivalTime: dayjs().add(21, 'minute').add(3, 'second'),
+          arrivalTime: dayjs().add(21, "minute").add(3, "second"),
           numOfRemainedStops: 11,
           numOfPassengers: 5,
-        }
-      ]
+        },
+      ],
     },
     {
       type: "B",
@@ -190,5 +191,5 @@ export const busStop = {
         },
       ],
     },
-  ]
+  ],
 };
